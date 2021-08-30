@@ -1,5 +1,5 @@
 
-SLURM_VERSION = 19.05.1
+SLURM_VERSION = 21.08.0
 IMAGE = scidas/slurm.rpms
 
 DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))

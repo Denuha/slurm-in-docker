@@ -1,7 +1,10 @@
 FROM centos:7
 MAINTAINER Michael J. Stealey <stealey@renci.org>
 
-ENV SLURM_VERSION=19.05.1
+ENV SLURM_VERSION=21.08.0
+
+RUN yum -y update; yum clean all
+RUN yum -y install systemd
 
 RUN yum -y install \
   deltarpm \
@@ -35,6 +38,9 @@ RUN yum -y install \
   perl-ExtUtils-MakeMaker \
   mariadb-server \
   mariadb-devel \
+  python3 \
+  http-parser-devel \
+  json-c-devel \
   && yum -y group install "Development Tools"
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh

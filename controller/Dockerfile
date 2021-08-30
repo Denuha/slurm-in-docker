@@ -1,4 +1,4 @@
-FROM scidas/slurm.base:19.05.1
+FROM scidas/slurm.base:21.08.0
 MAINTAINER Michael J. Stealey <stealey@renci.org>
 
 # install openmpi 3.0.1
@@ -34,6 +34,7 @@ ENV USE_SLURMDBD=true \
   SLURMD_PORT=6818 \
   ACCOUNTING_STORAGE_HOST=database \
   ACCOUNTING_STORAGE_PORT=6819 \
+  SLURMRESTD_PORT=6820 \
   PARTITION_NAME=docker
 
 # clean up

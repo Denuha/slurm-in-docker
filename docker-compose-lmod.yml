@@ -5,7 +5,7 @@ services:
     build:
       context: ./controller
       dockerfile: Dockerfile
-    image: scidas/slurm.controller:19.05.1
+    image: scidas/slurm.controller:21.08.0
     container_name: controller
     privileged: true
     volumes:
@@ -23,6 +23,7 @@ services:
       CONTROL_MACHINE: controller
       SLURMCTLD_PORT: 6817
       SLURMD_PORT: 6818
+      SLURMRESTD_PORT: 6820
       ACCOUNTING_STORAGE_HOST: database
       ACCOUNTING_STORAGE_PORT: 6819
       COMPUTE_NODES: worker01 worker02
@@ -32,7 +33,7 @@ services:
     build:
       context: ./database
       dockerfile: Dockerfile
-    image: scidas/slurm.database:19.05.1
+    image: scidas/slurm.database:21.08.0
     depends_on:
       - controller
     container_name: database
@@ -57,7 +58,7 @@ services:
     build:
       context: ./worker
       dockerfile: Dockerfile
-    image: scidas/slurm.worker:19.05.1
+    image: scidas/slurm.worker:21.08.0
     depends_on:
       - controller
     container_name: worker01
@@ -80,7 +81,7 @@ services:
     build:
       context: ./worker
       dockerfile: Dockerfile
-    image: scidas/slurm.worker:19.05.1
+    image: scidas/slurm.worker:21.08.0
     depends_on:
       - controller
     container_name: worker02
