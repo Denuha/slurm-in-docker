@@ -1,5 +1,6 @@
 # Easy start
 `make build`
+
 `docker-compose up`
 
 # Slurm in Docker
