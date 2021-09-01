@@ -1,10 +1,10 @@
 FROM centos:7
 MAINTAINER Michael J. Stealey <stealey@renci.org>
 
-ENV SLURM_VERSION=21.08.0
+ENV SLURM_VERSION=20.11.8
 
-RUN yum -y update; yum clean all
-RUN yum -y install systemd
+#RUN yum -y update; yum clean all
+#RUN yum -y install systemd
 
 RUN yum -y install \
   deltarpm \

@@ -1,4 +1,4 @@
-FROM scidas/slurm.base:21.08.0
+FROM scidas/slurm.base:20.11.8
 MAINTAINER Michael J. Stealey <stealey@renci.org>
 
 ENV DBD_ADDR=database \

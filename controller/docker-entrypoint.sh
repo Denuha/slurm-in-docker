@@ -234,7 +234,8 @@ echo "### Starting slurmctl ###"
 _slurmctld
 _slurmrestd_jwt
 echo "### Starting slurmrest ###"
-/usr/sbin/slurmrestd -u worker -a rest_auth/jwt
+#/usr/sbin/slurmrestd -u worker -a rest_auth/jwt
+slurmrestd -vvv -u worker -a rest_auth/jwt 0.0.0.0:6820
 #systemctl start slurmrestd
 #systemctl enable slurmrestd
 #systemctl restart slurmctl
