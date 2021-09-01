@@ -1,3 +1,7 @@
+# Easy start
+`make build`
+`docker-compose up`
+
 # Slurm in Docker
 
 **WORK IN PROGRESS**
