@@ -3,7 +3,7 @@ set -e
 
 # build slurm rpms
 wget https://download.schedmd.com/slurm/slurm-${SLURM_VERSION}.tar.bz2
-rpmbuild -ta "slurm-${SLURM_VERSION}.tar.bz2" --with slurmrestd
+rpmbuild -ta "slurm-${SLURM_VERSION}.tar.bz2" --with slurmrestd --with jwt
 cp /root/rpmbuild/RPMS/x86_64/slurm-* /packages
 
 # build openmpi rpm

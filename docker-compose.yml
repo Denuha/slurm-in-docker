@@ -12,7 +12,7 @@ services:
       - ./home:/home
       - ./secret:/.secret
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    restart: always
+    #restart: always
     hostname: controller.local.dev
     networks:
       - slurm
@@ -33,8 +33,8 @@ services:
       context: ./database
       dockerfile: Dockerfile
     image: scidas/slurm.database:21.08.0
-    depends_on:
-      - controller
+    #depends_on:
+    #  - controller
     container_name: database
     privileged: true
     volumes:

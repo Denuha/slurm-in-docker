@@ -1,11 +1,13 @@
-#FROM krallin/centos-tini:7
-FROM centos:7
+FROM krallin/centos-tini:7
+#FROM centos:7
 MAINTAINER Michael J. Stealey <stealey@renci.org>
 
 ENV SLURM_VERSION=21.08.0 \
   MUNGE_UID=981 \
   SLURM_UID=982 \
   WORKER_UID=1000
+
+ENV container docker
 
 RUN yum -y update; yum clean all
 RUN yum -y install systemd; yum clean all; \
@@ -40,7 +42,10 @@ RUN yum -y install \
   munge-devel \
   openssh-server \
   python3 \
-  openssh-clients
+  openssh-clients \
+  libjwt \
+  make \
+  git
 
 # install slurm 21.08.0
 COPY rpms /packages
@@ -58,4 +63,10 @@ VOLUME ["/home", "/.secret", "/sys/fs/cgroup"]
 # 6819:         Slurm DBD
 # 6820:         Slurm rest
 EXPOSE 22 3306 6817 6818 6819 6820
-CMD ["/usr/sbin/init"]
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN yum install -y autofs
+RUN systemctl enable autofs
+ENTRYPOINT ["/usr/sbin/init", "--", "/docker-entrypoint.sh"]
+#RUN mkdir /run/systemd/system
+#CMD ["/usr/sbin/init"]
+#CMD ["/usr/lib/systemd/systemd --system &"]

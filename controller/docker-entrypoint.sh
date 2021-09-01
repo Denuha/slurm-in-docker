@@ -83,6 +83,9 @@ SlurmUser=slurm
 SlurmctldPort=$SLURMCTLD_PORT
 SlurmdPort=$SLURMD_PORT
 AuthType=auth/munge
+AuthAltTypes=auth/jwt
+#AuthAltParameters=jwt_key=/var/spool/slurm/jwt_hs256.key
+AuthAltParameters=jwt_key=/etc/slurm/jwt_hs256.key
 #JobCredentialPrivateKey=
 #JobCredentialPublicCertificate=
 StateSaveLocation=/var/spool/slurm/ctld
@@ -122,17 +125,24 @@ Waittime=0
 #
 # SCHEDULING
 SchedulerType=sched/backfill
+SchedulerParameters=bf_continue,defer,kill_invalid_depend,bf_continue
+PreemptMODE=GANG,SUSPEND
+PreemptType=preempt/partition_prio
 #SchedulerAuth=
-#SelectType=select/linear
-FastSchedule=1
-#PriorityType=priority/multifactor
-#PriorityDecayHalfLife=14-0
-#PriorityUsageResetPeriod=14-0
-#PriorityWeightFairshare=100000
-#PriorityWeightAge=1000
-#PriorityWeightPartition=10000
-#PriorityWeightJobSize=1000
-#PriorityMaxAge=1-0
+SelectType=select/cons_res
+SelectTypeParameters=CR_Core
+#FastSchedule=1
+PriorityType=priority/multifactor
+PriorityDecayHalfLife=14-0
+PriorityUsageResetPeriod=NONE
+PriorityFavorSmall=yes
+PriorityWeightFairshare=0
+PriorityWeightAge=0
+PriorityWeightPartition=10000
+PriorityWeightJobSize=0
+PriorityWeightAssoc=0
+PriorityMaxAge=1-0
+PropagatePrioProcess=1
 #
 # LOGGING
 SlurmctldDebug=3
@@ -184,17 +194,49 @@ _slurmctld() {
     echo "### use provided slurm.conf ###"
     cp /home/config/slurm.conf /etc/slurm/slurm.conf
   fi
+  export PATH="/usr/lib64:$PATH"
   sacctmgr -i add cluster "${CLUSTER_NAME}"
   sleep 2s
   /usr/sbin/slurmctld
   cp -f /etc/slurm/slurm.conf /.secret/
 }
 
+_slurmrestd_jwt() {
+  dd if=/dev/random of=/etc/slurm/jwt_hs256.key bs=32 count=1
+  chown slurm:slurm /etc/slurm/jwt_hs256.key
+  chmod 0600 /etc/slurm/jwt_hs256.key
+  chown root:root /etc/slurm
+  chmod 0755 /etc/slurm
+
+  # 31540000 secons = 1 year
+  export $(sudo scontrol token username=worker lifespan=31540000)
+
+  echo $SLURM_JWT > /etc/slurm/slurm_jwt
+  cp -f /etc/slurm/slurm_jwt /.secret/
+}
+
+#_install_jwt_lib(){
+  #git clone https://github.com/benmcollins/libjwt.git
+  #cd libjwt
+  #autoreconf --force --install
+  #./configure --prefix=/usr/local
+  #make -j
+  #sudo make install
+#}
+
 ### main ###
 _sshd_host
 _ssh_worker
 _munge_start
 _copy_secrets
+#_install_jwt_lib
+echo "### Starting slurmctl ###"
 _slurmctld
+_slurmrestd_jwt
+echo "### Starting slurmrest ###"
+/usr/sbin/slurmrestd -u worker -a rest_auth/jwt
+#systemctl start slurmrestd
+#systemctl enable slurmrestd
+#systemctl restart slurmctl
 
 tail -f /dev/null

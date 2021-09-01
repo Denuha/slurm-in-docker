@@ -125,12 +125,18 @@ _slurmdbd() {
   if [[ ! -f /home/config/slurmdbd.conf ]]; then
     echo "### generate slurmdbd.conf ###"
     _generate_slurmdbd_conf
+    chmod 600 /etc/slurm/slurmdbd.conf
+    chown slurm:slurm /etc/slurm/slurmdbd.conf
   else
     echo "### use provided slurmdbd.conf ###"
     cp /home/config/slurmdbd.conf /etc/slurm/slurmdbd.conf
+    chmod 600 /etc/slurm/slurmdbd.conf
+    chown slurm:slurm /etc/slurm/slurmdbd.conf
   fi
   /usr/sbin/slurmdbd
   cp /etc/slurm/slurmdbd.conf /.secret/slurmdbd.conf
+  chmod 600 /etc/slurm/slurmdbd.conf
+  chown slurm:slurm /etc/slurm/slurmdbd.conf
 }
 
 ### main ###

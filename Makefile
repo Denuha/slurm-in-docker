@@ -7,6 +7,8 @@ all: build
 build: $(subdir)
 
 clean: $(subdir)
+	rm -rf home/*
+	rm -rf secret/*
 
 test:
 	$(MAKE) -C $@
